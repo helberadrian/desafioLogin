@@ -35,6 +35,40 @@ router.get('/profile', isAuthenticated, (req, res, next) => {
     res.render('profile');
 });
 
+// Object Process
+router.get('/info', (req, res, next) => {
+    const info = {
+        so: process.platform,
+        node: process.version,
+        memoria: process.memoryUsage(),
+        titulo: process.title,
+        path: process.path,
+        id: process.pid,
+        directorio: process.cwd()
+    }
+
+    res.json(info);
+});
+
+// Api Randoms
+router.post('/randoms/:cant', (req, res, next) => {
+    const num = req.params.cant;
+
+    if (num){
+        const calculo = fork(path.resolve(__dirname, '../func/randoms.js'));
+        calculo.send('start', num);
+        calculo.on('message', resultado => {
+            res.json({ resultado });
+        })
+    } else {
+        const calculo = fork(path.resolve(__dirname, '../func/randoms.js'));
+        calculo.send('start', 1e8);
+        calculo.on('message', resultado => {
+            res.json({ resultado });
+        })
+    }
+});
+
 // middlewares
 function isAuthenticated(req, res, next) { // para verificar si esta autenticado antes de acceder a una ruta
     if(req.isAuthenticated()){
