@@ -2,8 +2,11 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 
+const numCPUs = require('os').cpus().length;
+
 router.get('/', (req, res, next) => {
-    res.render('index');
+    console.log(`port: ${PORT} -> Fyh: ${Date.now()}`);
+    res.send(`Servidor express <span style="color:blueviolet;">(Nginx)</span> en ${PORT} - <b>PID ${process.pid}</b> - ${new Date().toLocaleString()}`);
 });
 
 router.get('/signup', (req, res, next) => {
@@ -44,7 +47,8 @@ router.get('/info', (req, res, next) => {
         titulo: process.title,
         path: process.path,
         id: process.pid,
-        directorio: process.cwd()
+        directorio: process.cwd(),
+        cpu: numCPUs
     }
 
     res.json(info);

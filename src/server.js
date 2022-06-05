@@ -7,21 +7,19 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const parseArgs = require('minimist');
 
+// Cluster
+const cluster = require('cluster')
+const http = require('http')
+const numCPUs = require('os').cpus().length
+
 // Ini
 const app = express();
 require('./database');
 require('./passport/auth');
 require('./keys');
 
-// minimist
-const options = {
-    alias: {
-        p: 'puerto'
-    },
-    default: {
-        puerto: 8080
-    }
-}
+// port
+const PORT = parseInt(process.argv[2]) || 8080
 
 const command = process.argv.slice(2);
 const { puerto } = parseArgs(command, options);
@@ -52,6 +50,11 @@ app.use((req, res, next) =>{
 app.use('/', require('./routes/index'));
 
 // starting server
-app.listen(puerto, process.env.HOST, () => {
-    console.log(`Servidor conectado escuchando en http://${process.env.HOST}:${puerto}`);
-});
+
+app.listen(PORT, err => {
+    if(!err) console.log(`Servidor express escuchando en el puerto ${PORT} - PID WORKER ${process.pid}`)
+})
+
+//app.listen(puerto, process.env.HOST, () => {
+//    console.log(`Servidor conectado escuchando en http://${process.env.HOST}:${puerto}`);
+//});
