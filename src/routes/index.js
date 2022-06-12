@@ -1,6 +1,8 @@
+const compression = require('compression');
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
+const logger = require('../loggers/logger');
 
 const numCPUs = require('os').cpus().length;
 
@@ -39,7 +41,7 @@ router.get('/profile', isAuthenticated, (req, res, next) => {
 });
 
 // Object Process
-router.get('/info', (req, res, next) => {
+router.get('/info', compression(), (req, res, next) => {
     const info = {
         so: process.platform,
         node: process.version,
